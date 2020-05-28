@@ -13,7 +13,7 @@ type Interface interface {
 	Save(f io.Writer, saveValue func (w io.Writer, data interface{}) error) (err error)
 
 	// Load tree from disk
-	Load(f io.Reader, loadValue func (r io.Reader, obuf []byte) (interface{}, []byte, error)) (tr interface{}, err error)
+	Load(f io.Reader, loadValue func (r io.Reader, obuf []byte) (interface{}, []byte, error)) (err error)
 
 	// Insert an item into the structure
 	Insert(min, max [2]float64, data interface{})
@@ -69,8 +69,9 @@ func (index *Index) Save(f io.Writer, saveValue func (w io.Writer, value interfa
 	return index.tree.Save(f, saveValue)
 }
 
-func (index *Index) Load(f io.Reader, loadValue func (r io.Reader, obuf []byte) (interface{}, []byte, error)) (tr interface{}, err error) {
-	return index.tree.Load(f, loadValue)
+func (index *Index) Load(f io.Reader, loadValue func (r io.Reader, obuf []byte) (interface{}, []byte, error)) (err error) {
+	err = index.tree.Load(f, loadValue)
+	return
 }
 
 // Search the index for items that intersects the rect param

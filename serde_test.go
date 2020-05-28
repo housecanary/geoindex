@@ -57,9 +57,9 @@ func TestSaveLoadGeoIndex(t *testing.T) {
 		t.Fatal("opening failed")
 	}
 
-	var newTr *rbang.RTree
+	newTr := &rbang.RTree{}
 
-	if newTr, err = rbang.Load(f, itemLoader); err != nil {
+	if err = newTr.Load(f, itemLoader); err != nil {
 		t.Fatal("loading failed")
 	}
 
