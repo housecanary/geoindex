@@ -2,12 +2,19 @@ package geoindex
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/tidwall/geoindex/child"
 )
 
 // Interface is a tree-like structure that contains geospatial data
 type Interface interface {
+	// Save tree to disk
+	Save(f io.Writer, saveValue func (w io.Writer, data interface{}) error) (err error)
+
+	// Load tree from disk
+	Load(f io.Reader, loadValue func (r io.Reader, obuf []byte) (interface{}, []byte, error)) (tr interface{}, err error)
+
 	// Insert an item into the structure
 	Insert(min, max [2]float64, data interface{})
 	// Delete an item from the structure
@@ -55,6 +62,15 @@ func Wrap(tree Interface) *Index {
 // Insert an item into the index
 func (index *Index) Insert(min, max [2]float64, data interface{}) {
 	index.tree.Insert(min, max, data)
+}
+
+// Insert an item into the index
+func (index *Index) Save(f io.Writer, saveValue func (w io.Writer, value interface{}) error) (err error) {
+	return index.tree.Save(f, saveValue)
+}
+
+func (index *Index) Load(f io.Reader, loadValue func (r io.Reader, obuf []byte) (interface{}, []byte, error)) (tr interface{}, err error) {
+	return index.tree.Load(f, loadValue)
 }
 
 // Search the index for items that intersects the rect param
